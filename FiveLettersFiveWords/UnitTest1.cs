@@ -9,9 +9,9 @@ namespace FiveLettersFiveWordsTest
         {
             var fiveWords = new FiveWords();
 
-            fiveWords.FiveWordsArray("\\words_perfekt_data.txt");
+            string testCheck = fiveWords.FiveWordsArray("\\words_perfekt_data.txt");
 
-            Assert.Equal(5,5);
+            Assert.Equal(5, testCheck.Length);
         }
     }
 }
