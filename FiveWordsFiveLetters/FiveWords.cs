@@ -12,18 +12,29 @@ namespace FiveWordsFiveLetters
         {
 
         }
-        public string[] FiveWordsArray() 
+        public string[] FiveWordsArray(string filepath) 
         {
             string dir = Directory.GetCurrentDirectory();
-            string dirPathFile = System.IO.Path.Combine(dir + "\\words_perfekt_data.txt");
+            string dirPathFile = System.IO.Path.Combine(dir + filepath);
 
             string[] readFile = File.ReadAllLines(dirPathFile);
-            foreach (var item in readFile)
+            for (int i = 0; i < readFile.Count(); i++)
             {
-                Console.WriteLine(item);
+                Check(readFile[i]);
             }
             return readFile;
-            
+        }
+
+        public bool Check(string word)
+        {
+            // Checking if lenght is less or more than 5
+            int stringLength = word.Length;
+            bool passed = true;
+
+            if (stringLength != 5)
+                passed = false;
+
+            return passed;
         }
     }
 }

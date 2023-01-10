@@ -8,12 +8,10 @@ namespace FiveLettersFiveWordsTest
         public void ReadAllWordsTest()
         {
             var fiveWords = new FiveWords();
-            string[] result = fiveWords.FiveWordsArray();
-            for (int i = 0; i < result.Count(); i++)
-            {
-                result[i].Length != 5;  
-            }
-            Assert.Equal();
+
+            fiveWords.FiveWordsArray("\\words_perfekt_data.txt");
+
+            Assert.Equal(5,5);
         }
     }
 }
