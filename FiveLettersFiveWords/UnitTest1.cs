@@ -4,14 +4,22 @@ namespace FiveLettersFiveWordsTest
 {
     public class UnitTest1
     {
-        [Fact]
-        public void ReadAllWordsTest()
+        [Theory]
+        [InlineData("Katte")]
+        public void CheckDoubleTest(string hardcoded)
         {
             var fiveWords = new FiveWords();
 
-            string testCheck = fiveWords.FiveWordsArray("\\words_perfekt_data.txt");
+            Assert.False(fiveWords.CheckDouble(hardcoded));
+        }
 
-            Assert.Equal(5, testCheck.Length);
+        [Theory]
+        [InlineData("Hansen")]
+        public void CheckTest(string hardcoded)
+        {
+            var fiveWords = new FiveWords();
+
+            Assert.False(fiveWords.CheckLength(hardcoded));
         }
     }
 }

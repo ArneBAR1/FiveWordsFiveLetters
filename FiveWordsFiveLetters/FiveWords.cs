@@ -15,22 +15,22 @@ namespace FiveWordsFiveLetters
         public List<string> FiveWordsArray(string filepath) 
         {
             string dir = Directory.GetCurrentDirectory();
-            string dirPathFile = System.IO.Path.Combine(dir + filepath);
+            string dirFilePath = System.IO.Path.Combine(dir + filepath);
 
-            string[] readFile = File.ReadAllLines(dirPathFile);
-            List<string> words = new List<string>();
+            string[] readFile = File.ReadAllLines(dirFilePath);
+            List<string> pureWordList = new List<string>();
             for (int i = 0; i < readFile.Count(); i++)
             {
-                if (Check(readFile[i]) && CheckDouble(readFile[i])) 
+                if (CheckLength(readFile[i]) && CheckDouble(readFile[i])) 
                 {
-                    words.Add(readFile[i]);
-                    Console.WriteLine(words[i]);
+                    pureWordList.Add(readFile[i]);
+                    Console.WriteLine(pureWordList[i]);
                 }
             }
-            return words;
+            return pureWordList;
         }
 
-        public bool Check(string word)
+        public bool CheckLength(string word)
         {
             // Checking if lenght is less or more than 5
             int stringLength = word.Length;
@@ -44,7 +44,7 @@ namespace FiveWordsFiveLetters
 
         public bool CheckDouble(string word) 
         {
-            bool fits = true;
+            bool unMatched = true;
             int stringLength = word.Length;
             for (int q = 0; q < stringLength; q++)
             {
@@ -52,12 +52,33 @@ namespace FiveWordsFiveLetters
                 {
                     if (word[q] == word[w] && q != w)
                     {
-                        fits = false;
+                        unMatched = false;
                     }
 
                 }
             }
-            return fits;
+            return unMatched;
+        }
+
+        public bool CheckCharacter(string word)
+        {
+            List<string> characters = new List<string>();
+            bool pass = true;
+
+            int stringLength = word.Length;
+            for (int q = 0; q < stringLength; q++)
+            {
+                for (int w = 0; w < characters.Count; w++)
+                {
+                    if (word[q].ToString() == characters[w] && q != w)
+                    {
+                        pass = false;
+                    }
+
+                }
+            }
+
+            return pass;
         }
     }
 }
