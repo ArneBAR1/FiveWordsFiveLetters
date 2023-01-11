@@ -27,8 +27,16 @@ namespace FiveWordsFiveLetters
                 if (CheckLength(readFile[i]) && CheckDouble(readFile[i]) && CheckCharacter(readFile[i])) 
                 {
                     pureWordList.Add(readFile[i]);
-                    Console.WriteLine(pureWordList[i]);
+                    //Console.WriteLine(pureWordList[i]);
                 }
+            }
+            foreach (var item in characters)
+            {
+                Console.WriteLine(item);
+            }
+            foreach (var item in pureWordList) 
+            {
+                Console.WriteLine(item);
             }
             Console.WriteLine("Char: "+characters.Count());
             return pureWordList;
@@ -67,6 +75,7 @@ namespace FiveWordsFiveLetters
         public bool CheckCharacter(string word)
         {
             bool pass = true;
+            string placeholder = ""; 
 
             int stringLength = word.Length;
             for (int q = 0; q < stringLength; q++)
@@ -77,10 +86,26 @@ namespace FiveWordsFiveLetters
                     {
                         pass = false;
                     }
+                    else
+                    {
+                        placeholder += word[q].ToString();
+                    }
                 }
             }
-            if (pass == true)
-                characters.Add(word.ToString());
+            if (pass == true && placeholder.Length >= 25)
+            {
+                foreach (var item in word)
+                {
+                    characters.Add(item.ToString());
+                }
+            }
+            if (characters.Count() == 0)
+            {
+                foreach (var item in word)
+                {
+                    characters.Add(item.ToString());
+                }
+            }
             return pass;
         }
     }
