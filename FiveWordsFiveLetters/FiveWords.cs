@@ -12,6 +12,9 @@ namespace FiveWordsFiveLetters
         {
 
         }
+
+        List<string> characters = new List<string>();
+
         public List<string> FiveWordsArray(string filepath) 
         {
             string dir = Directory.GetCurrentDirectory();
@@ -21,12 +24,13 @@ namespace FiveWordsFiveLetters
             List<string> pureWordList = new List<string>();
             for (int i = 0; i < readFile.Count(); i++)
             {
-                if (CheckLength(readFile[i]) && CheckDouble(readFile[i])) 
+                if (CheckLength(readFile[i]) && CheckDouble(readFile[i]) && CheckCharacter(readFile[i])) 
                 {
                     pureWordList.Add(readFile[i]);
                     Console.WriteLine(pureWordList[i]);
                 }
             }
+            Console.WriteLine("Char: "+characters.Count());
             return pureWordList;
         }
 
@@ -62,7 +66,6 @@ namespace FiveWordsFiveLetters
 
         public bool CheckCharacter(string word)
         {
-            List<string> characters = new List<string>();
             bool pass = true;
 
             int stringLength = word.Length;
@@ -70,14 +73,14 @@ namespace FiveWordsFiveLetters
             {
                 for (int w = 0; w < characters.Count; w++)
                 {
-                    if (word[q].ToString() == characters[w] && q != w)
+                    if (word[q].ToString() == characters[w])
                     {
                         pass = false;
                     }
-
                 }
             }
-
+            if (pass == true)
+                characters.Add(word.ToString());
             return pass;
         }
     }
