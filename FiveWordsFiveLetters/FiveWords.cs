@@ -14,14 +14,20 @@ namespace FiveWordsFiveLetters
         }
 
         List<string> characters = new List<string>();
+        List<string> pureWordList = new List<string>();
 
-        public List<string> FiveWordsArray(string filepath) 
+        public string[] gatherWords(string filepath)
         {
             string dir = Directory.GetCurrentDirectory();
             string dirFilePath = System.IO.Path.Combine(dir + filepath);
-
             string[] readFile = File.ReadAllLines(dirFilePath);
-            List<string> pureWordList = new List<string>();
+
+            return readFile;
+        }
+
+        public List<string> FiveWordsArray() 
+        {
+            string[] readFile = gatherWords("\\Beta.txt");
             for (int i = 0; i < readFile.Count(); i++)
             {
                 if (CheckLength(readFile[i]) && CheckDouble(readFile[i]) && CheckCharacter(readFile[i])) 
@@ -30,6 +36,7 @@ namespace FiveWordsFiveLetters
                     //Console.WriteLine(pureWordList[i]);
                 }
             }
+            Combination();
             foreach (var item in characters)
             {
                 Console.WriteLine(item);
@@ -107,6 +114,26 @@ namespace FiveWordsFiveLetters
                 }
             }
             return pass;
+        }
+
+        public bool Combination()
+        {
+            // Tjek om der er mindre end 5 ord
+            // Lav en kopi af purewordlist og få den til at ændre starte fra et andet ord vis der ikke er 25 kombinationer
+
+            if(pureWordList.Count() < 5 || characters.Count() < 25)
+            {
+                Console.Clear();
+                Console.WriteLine("Retrying");
+
+                characters.Clear();
+                pureWordList.Clear();
+
+                FiveWordsArray();
+            }
+            // If you forget Inge, Inge will forget you. Welcome to the block :-)
+            return false;
+
         }
     }
 }

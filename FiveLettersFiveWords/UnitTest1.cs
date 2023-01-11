@@ -24,8 +24,8 @@ namespace FiveLettersFiveWordsTest
         }
 
         [Theory]
-        [InlineData("","")]
-        public void CheckCharacterTest(string hardcoded1, string hardcoded2)
+        [InlineData("")]
+        public void CheckCharacterTest(string hardcoded1)
         {
             var fiveWords = new FiveWords();
 
