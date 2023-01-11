@@ -15,6 +15,7 @@ namespace FiveWordsFiveLetters
 
         List<string> characters = new List<string>();
         List<string> pureWordList = new List<string>();
+        int fiveMatches = 0;
 
         public string[] gatherWords(string filepath)
         {
@@ -28,24 +29,24 @@ namespace FiveWordsFiveLetters
         public List<string> FiveWordsArray() 
         {
             string[] readFile = gatherWords("\\Beta.txt");
-            for (int i = 0; i < readFile.Count(); i++)
+            for (int q = 0; q < readFile.Count(); q++)
             {
-                if (CheckLength(readFile[i]) && CheckDouble(readFile[i]) && CheckCharacter(readFile[i])) 
+                for (int i = 0; i < readFile.Count(); i++)
                 {
-                    pureWordList.Add(readFile[i]);
-                    //Console.WriteLine(pureWordList[i]);
+                    if (readFile[q] != readFile[i] && q != i)
+                    {
+                        if (CheckLength(readFile[i]) && CheckDouble(readFile[i]) && CheckCharacter(readFile[i]))
+                        {
+                            pureWordList.Add(readFile[i]);
+
+                        }
+                    }
                 }
+                Combination();
             }
-            Combination();
-            foreach (var item in characters)
-            {
-                Console.WriteLine(item);
-            }
-            foreach (var item in pureWordList) 
-            {
-                Console.WriteLine(item);
-            }
-            Console.WriteLine("Char: "+characters.Count());
+
+
+            Console.WriteLine("FiveWordsMatches: " + fiveMatches);
             return pureWordList;
         }
 
@@ -120,17 +121,28 @@ namespace FiveWordsFiveLetters
         {
             // Tjek om der er mindre end 5 ord
             // Lav en kopi af purewordlist og få den til at ændre starte fra et andet ord vis der ikke er 25 kombinationer
-
-            if(pureWordList.Count() < 5 || characters.Count() < 25)
+            Console.WriteLine("Result for this run:");
+            foreach (var item in pureWordList)
             {
-                Console.Clear();
-                Console.WriteLine("Retrying");
-
-                characters.Clear();
-                pureWordList.Clear();
-
-                FiveWordsArray();
+                Console.WriteLine(item);
             }
+            //foreach (var item in characters)
+            //{
+            //    Console.WriteLine(item);
+            //}
+            Console.WriteLine("Char: " + characters.Count());
+            
+
+            if(pureWordList.Count() == 5 && characters.Count() == 25)
+            {
+                fiveMatches++;
+            }
+
+            //Console.Clear();
+            Console.WriteLine("Going again!");
+
+            characters.Clear();
+            pureWordList.Clear();
             // If you forget Inge, Inge will forget you. Welcome to the block :-)
             return false;
 
