@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -60,9 +61,28 @@ namespace FiveWordsFiveLetters
                     }
                 }
             }
-
+            
             Console.WriteLine("FiveWordsMatches: " + fiveMatches);
+            FromString();
             return pureWordList;
+        }
+
+        public void FromString() 
+        {
+            bool succes;
+            byte[] InputbyteArray = Encoding.ASCII.GetBytes("Cake");
+            var test = BitConverter.ToUInt64(InputbyteArray);
+            byte[] SecondInputArray = Encoding.ASCII.GetBytes("SecondCake");
+            var test2 = BitConverter.ToUInt64(SecondInputArray);
+            ulong compare = test & test2;
+            if (compare == 0)
+            {
+                succes = true;
+            }
+            else { succes = false; }
+            //string BitString = Encoding.UTF8.GetString(InputbyteArray);
+            //Console.WriteLine(BitString); 
+            Console.WriteLine(succes);
         }
 
         public bool CheckLength(string word)
