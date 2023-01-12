@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
+using System.ComponentModel;
 
 namespace FiveWordsFiveLetters
 {
@@ -15,7 +17,7 @@ namespace FiveWordsFiveLetters
         }
 
         List<string> characters = new List<string>();
-        List<string> pureWordList = new List<string>();
+        Dictionary<string,int> dictionary = new Dictionary<string, int>();
         int fiveMatches = 0;
 
         public List<string> gatherWords(string filepath)
@@ -27,62 +29,81 @@ namespace FiveWordsFiveLetters
 
             for (int i = 0; i < readingFile.Count(); i++)
             {
-                if (CheckLength(readingFile[i]) && CheckDouble(readingFile[i]))
+                if (CheckLength(readingFile[i]) && CheckDouble(readingFile[i])) 
+                {
+                    FromString(readingFile[i]);
                     readFile.Add(readingFile[i]);
+                    
+                }
             }
 
             return readFile;
         }
 
-        public List<string> FiveWordsArray()
+        public int FiveWordsArray()
         {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
             List<string> readFile = gatherWords("\\Beta.txt");
-            for (int i = 0; i < readFile.Count(); i++)
+            for (int i = 0; i <= readFile.Count(); i++) 
             {
                 for (int k = i + 1; k < readFile.Count(); k++)
                 {
-                    if (string.Concat(readFile[i], readFile[k]).Distinct().Count() != 10) continue;
                     for (int c = k + 1; c < readFile.Count(); c++)
                     {
-                        if (string.Concat(readFile[i], readFile[k], readFile[c]).Distinct().Count() != 15) continue;
                         for (int b = c + 1; b < readFile.Count(); b++)
                         {
-                            if (string.Concat(readFile[i], readFile[k], readFile[c], readFile[b]).Distinct().Count() != 20) continue;
+                            for (int d = b + 1; d < readFile.Count(); d++)
                             {
-                                for (int d = b + 1; d < readFile.Count(); d++)
-                                {
-                                    if (string.Concat(readFile[i], readFile[k], readFile[c], readFile[b], readFile[d]).Distinct().Count() != 25) continue;
-                                    Console.WriteLine($"Word1: {readFile[i]}, Word2: {readFile[k]} Word3: {readFile[c]}, Word4: {readFile[b]}, Word5: {readFile[d]}");
-                                    pureWordList.Add(readFile[i]);
-                                    fiveMatches++;
-                                }
+                                if (CompareBit(readFile[i], readFile[k], readFile[c], readFile[b], readFile[d]))
+                                Console.WriteLine($"Word1: {readFile[i]}, Word2: {readFile[k]} Word3: {readFile[c]}, Word4: {readFile[b]}, Word5: {readFile[d]}");
+                                fiveMatches++;
+
                             }
                         }
+
                     }
                 }
             }
+            //for (int i = 0; i < readFile.Count(); i++)
+            //{
+            //    for (int k = i + 1; k < readFile.Count(); k++)
+            //    {
+            //        if (string.Concat(readFile[i], readFile[k]).Distinct().Count() != 10) continue;
+            //        for (int c = k + 1; c < readFile.Count(); c++)
+            //        {
+            //            if (string.Concat(readFile[i], readFile[k], readFile[c]).Distinct().Count() != 15) continue;
+            //            for (int b = c + 1; b < readFile.Count(); b++)
+            //            {
+            //                if (string.Concat(readFile[i], readFile[k], readFile[c], readFile[b]).Distinct().Count() != 20) continue;
+            //                {
+            //                    for (int d = b + 1; d < readFile.Count(); d++)
+            //                    {
+            //                        if (string.Concat(readFile[i], readFile[k], readFile[c], readFile[b], readFile[d]).Distinct().Count() != 25) continue;
+            //                        Console.WriteLine($"Word1: {readFile[i]}, Word2: {readFile[k]} Word3: {readFile[c]}, Word4: {readFile[b]}, Word5: {readFile[d]}");
+            //                        fiveMatches++;
+            //                    }
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
             
             Console.WriteLine("FiveWordsMatches: " + fiveMatches);
-            FromString();
-            return pureWordList;
+            stopwatch.Stop();
+            Console.WriteLine("Done in " + stopwatch);
+            return fiveMatches;
         }
 
-        public void FromString() 
+        public void FromString(string word) 
         {
-            bool succes;
-            byte[] InputbyteArray = Encoding.ASCII.GetBytes("Cake");
-            var test = BitConverter.ToUInt64(InputbyteArray);
-            byte[] SecondInputArray = Encoding.ASCII.GetBytes("SecondCake");
-            var test2 = BitConverter.ToUInt64(SecondInputArray);
-            ulong compare = test & test2;
-            if (compare == 0)
+            int bit = 0;
+            for (int i = 0; i < word.Length; i++)
             {
-                succes = true;
+                bit |= 1 << (word[i] - 'a');
             }
-            else { succes = false; }
-            //string BitString = Encoding.UTF8.GetString(InputbyteArray);
-            //Console.WriteLine(BitString); 
-            Console.WriteLine(succes);
+            
+            dictionary.Add(word, bit);
         }
 
         public bool CheckLength(string word)
@@ -112,6 +133,14 @@ namespace FiveWordsFiveLetters
                 }
             }
             return unMatched;
+        }
+
+        public bool CompareBit(string word1, string word2, string word3, string word4, string word5) 
+        {
+            bool pass;
+            int word1Binary = dictionary[word1];
+            var compare = word1Binary & word2
+            return pass;
         }
     }
 }
