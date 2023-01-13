@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using System.ComponentModel;
+using System.Threading;
 
 namespace FiveWordsFiveLetters
 {
@@ -45,23 +46,37 @@ namespace FiveWordsFiveLetters
         {
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-            gatherWords("\\Beta.txt");
-         
-            for (int i = 0; i <= bitList.Count(); i++) 
+            gatherWords("\\Alpha.txt");
+
+            Thread t = new Thread(new ThreadStart(Threading));
+
+            t.Start();
+
+            t.Join();
+
+            Console.WriteLine("FiveWordsMatches: " + fiveMatches);
+            stopwatch.Stop();
+            Console.WriteLine($"Done in {stopwatch.ElapsedMilliseconds} ms");
+            return fiveMatches;
+        }
+
+        public void Threading()
+        {
+            for (int i = 0; i <= bitList.Count(); i++)
             {
                 for (int k = i + 1; k < bitList.Count(); k++)
                 {
-                    if (string.Concat(bitList[i], bitList[k]).Distinct().Count() !=10) continue;
+                    if ((bitList[i] & bitList[k]) != 0) continue;
                     for (int c = k + 1; c < bitList.Count(); c++)
                     {
-                        if (string.Concat(bitList[i], bitList[k], bitList[c]).Distinct().Count() != 15) continue;
+                        if (((bitList[i] | bitList[k]) & bitList[c]) != 0) continue;
                         for (int b = c + 1; b < bitList.Count(); b++)
                         {
-                            if (string.Concat(bitList[i], bitList[k], bitList[c], bitList[b]).Distinct().Count() != 20) continue;
+                            if (((bitList[i] | bitList[k] | bitList[c]) & bitList[b]) != 0) continue;
                             for (int d = b + 1; d < bitList.Count(); d++)
                             {
-                                if (string.Concat(bitList[i], bitList[k], bitList[c], bitList[b], bitList[d]).Distinct().Count() != 25) continue;
-                                Console.WriteLine($"Word1: {bitList[i]}, Word2: {bitList[k]} Word3: {bitList[c]}, Word4: {bitList[b]}, Word5: {bitList[d]}");
+                                if (((bitList[i] | bitList[k] | bitList[c] | bitList[b]) & bitList[d]) != 0) continue;
+                                Console.WriteLine($"Word1: {dictionary[bitList[i]]}, Word2: {dictionary[bitList[k]]} Word3: {dictionary[bitList[c]]}, Word4: {dictionary[bitList[b]]}, Word5: {dictionary[bitList[d]]}");
                                 fiveMatches++;
                             }
                         }
@@ -69,34 +84,6 @@ namespace FiveWordsFiveLetters
                     }
                 }
             }
-            //for (int i = 0; i < readFile.Count(); i++)
-            //{
-            //    for (int k = i + 1; k < readFile.Count(); k++)
-            //    {
-            //        if (string.Concat(readFile[i], readFile[k]).Distinct().Count() != 10) continue;
-            //        for (int c = k + 1; c < readFile.Count(); c++)
-            //        {
-            //            if (string.Concat(readFile[i], readFile[k], readFile[c]).Distinct().Count() != 15) continue;
-            //            for (int b = c + 1; b < readFile.Count(); b++)
-            //            {
-            //                if (string.Concat(readFile[i], readFile[k], readFile[c], readFile[b]).Distinct().Count() != 20) continue;
-            //                {
-            //                    for (int d = b + 1; d < readFile.Count(); d++)
-            //                    {
-            //                        if (string.Concat(readFile[i], readFile[k], readFile[c], readFile[b], readFile[d]).Distinct().Count() != 25) continue;
-            //                        Console.WriteLine($"Word1: {readFile[i]}, Word2: {readFile[k]} Word3: {readFile[c]}, Word4: {readFile[b]}, Word5: {readFile[d]}");
-            //                        fiveMatches++;
-            //                    }
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
-            
-            Console.WriteLine("FiveWordsMatches: " + fiveMatches);
-            stopwatch.Stop();
-            Console.WriteLine($"Done in {stopwatch.ElapsedMilliseconds} ms");
-            return fiveMatches;
         }
 
         public void FromString(string word) 
