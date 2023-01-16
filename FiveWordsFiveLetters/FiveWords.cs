@@ -21,6 +21,8 @@ namespace FiveWordsFiveLetters
         Dictionary<int,string> dictionary = new Dictionary<int, string>();
         List<int> bitList = new List<int>();
         int fiveMatches = 0;
+        Dictionary<string, int> alphabetDictionary = new Dictionary<string, int>();
+        int value = 1;
 
         public void gatherWords(string filepath)
         {
@@ -28,28 +30,27 @@ namespace FiveWordsFiveLetters
             string dir = Directory.GetCurrentDirectory();
             string dirFilePath = System.IO.Path.Combine(dir + filepath);
             string[] readingFile = File.ReadAllLines(dirFilePath);
-            Dictionary<string, int> alphabetDictionary = new Dictionary<string, int>();
-            int value = 1;
 
             for (int i = 0; i < readingFile.Count(); i++)
             {
                 if (CheckLength(readingFile[i]) && CheckDouble(readingFile[i])) 
                 {
                     FromString(readingFile[i]);
-                    if (!alphabetDictionary.ContainsKey(readingFile[i][0].ToString()))
-                    {
-                        alphabetDictionary.Add(readingFile[i][0].ToString(), value);
-                    }
-                    else 
-                    {
-                        value++;
-                        alphabetDictionary[readingFile[i][0].ToString()] = value; 
-                    }
-                    
+
                 }
             }
 
+            var sortedAlphabet = (
+                from entry in alphabetDictionary
+                orderby entry.Value ascending
+                select entry
+            ).ToList();
 
+
+            foreach (var item in sortedAlphabet)
+            {
+                Console.WriteLine("Alphabet dictionary: " + item);
+            }
 
             //return readFile;
         }
@@ -101,6 +102,7 @@ namespace FiveWordsFiveLetters
         public void FromString(string word) 
         {
             int bit = 0;
+            int bitnum = 0;
             for (int i = 0; i < word.Length; i++)
             {
                 bit |= 1 << (word[i] - 'a');
@@ -111,7 +113,20 @@ namespace FiveWordsFiveLetters
                 dictionary.Add(bit, word);
                 bitList.Add(bit);
             }
-                
+
+            bitnum |= 1 << (word[0] - 'a');
+
+            if (!alphabetDictionary.ContainsKey(bitnum.ToString()))
+            {
+                value = 1;
+                alphabetDictionary.Add(bitnum.ToString(), value);
+            }
+            else
+            {
+                value++;
+                alphabetDictionary[bitnum.ToString()] = value;
+            }
+
         }
 
         public bool CheckLength(string word)
