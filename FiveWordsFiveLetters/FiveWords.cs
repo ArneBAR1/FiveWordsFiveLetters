@@ -28,16 +28,28 @@ namespace FiveWordsFiveLetters
             string dir = Directory.GetCurrentDirectory();
             string dirFilePath = System.IO.Path.Combine(dir + filepath);
             string[] readingFile = File.ReadAllLines(dirFilePath);
+            Dictionary<string, int> alphabetDictionary = new Dictionary<string, int>();
+            int value = 1;
 
             for (int i = 0; i < readingFile.Count(); i++)
             {
                 if (CheckLength(readingFile[i]) && CheckDouble(readingFile[i])) 
                 {
                     FromString(readingFile[i]);
-              //      readFile.Add(readingFile[i]);
+                    if (!alphabetDictionary.ContainsKey(readingFile[i][0].ToString()))
+                    {
+                        alphabetDictionary.Add(readingFile[i][0].ToString(), value);
+                    }
+                    else 
+                    {
+                        value++;
+                        alphabetDictionary[readingFile[i][0].ToString()] = value; 
+                    }
                     
                 }
             }
+
+
 
             //return readFile;
         }
@@ -46,7 +58,7 @@ namespace FiveWordsFiveLetters
         {
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-            gatherWords("\\Alpha.txt");
+            gatherWords("\\Beta.txt");
 
             Thread t = new Thread(new ThreadStart(Threading));
 
