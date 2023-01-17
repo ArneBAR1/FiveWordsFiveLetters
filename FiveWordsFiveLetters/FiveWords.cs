@@ -37,9 +37,12 @@ namespace FiveWordsFiveLetters
                 if (CheckLength(readingFile[i]) && CheckDouble(readingFile[i])) 
                 {
                     FromString(readingFile[i]);
-
                 }
             }
+
+            // & dem sammen vis den ikke giver 0 er bogstavet i ordet.
+            // Brug sortedAlphabet og bitlist til at match sammen.
+            // match dem i vores query for at undgå en for loop.
 
             var sortedAlphabet = (
                 from entry in alphabetDictionary
@@ -72,7 +75,7 @@ namespace FiveWordsFiveLetters
             Console.WriteLine($"Done in {stopwatch.ElapsedMilliseconds} ms");
             return fiveMatches;
         }
-
+        
         public void Threading()
         {
             Parallel.For(0, bitList.Count(), i =>
@@ -92,7 +95,6 @@ namespace FiveWordsFiveLetters
                                 fiveMatches++;
                             }
                         }
-
                     }
                 });
             });
