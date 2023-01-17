@@ -50,6 +50,14 @@ namespace FiveWordsFiveLetters
                 select entry
             ).ToList();
 
+            for (int i = 0; i < bitList.Count(); i++)
+            {
+                for (int k = 0; k < sortedAlphabet.Count(); k++)
+                {
+                    if ((sortedAlphabet[k].Key & bitList[i]) != 0) continue;
+                }
+            }
+            
             foreach (var item in sortedAlphabet)
             {
                 Console.WriteLine("Alphabet dictionary: " + item);
