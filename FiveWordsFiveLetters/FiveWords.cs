@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.Threading;
+using static System.Collections.Specialized.BitVector32;
 
 namespace FiveWordsFiveLetters
 {
@@ -46,7 +47,6 @@ namespace FiveWordsFiveLetters
                 select entry
             ).ToList();
 
-
             foreach (var item in sortedAlphabet)
             {
                 Console.WriteLine("Alphabet dictionary: " + item);
@@ -59,7 +59,7 @@ namespace FiveWordsFiveLetters
         {
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-            gatherWords("\\Beta.txt");
+            gatherWords("\\Alpha.txt");
 
             Thread t = new Thread(new ThreadStart(Threading));
 
@@ -75,11 +75,10 @@ namespace FiveWordsFiveLetters
 
         public void Threading()
         {
-            for (int i = 0; i <= bitList.Count(); i++)
+            Parallel.For(0, bitList.Count(), i =>
             {
-                for (int k = i + 1; k < bitList.Count(); k++)
-                {
-                    if ((bitList[i] & bitList[k]) != 0) continue;
+                Parallel.For(i + 1, bitList.Count(), k => {
+                    if ((bitList[i] & bitList[k]) != 0) return;
                     for (int c = k + 1; c < bitList.Count(); c++)
                     {
                         if (((bitList[i] | bitList[k]) & bitList[c]) != 0) continue;
@@ -95,8 +94,8 @@ namespace FiveWordsFiveLetters
                         }
 
                     }
-                }
-            }
+                });
+            });
         }
 
         public void FromString(string word) 
