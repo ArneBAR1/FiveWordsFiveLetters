@@ -2,4 +2,4 @@
 
 Console.WriteLine("FiveWordsFiveLetters");
 var fiveWords = new FiveWords();
-fiveWords.FiveWordsArray();
+fiveWords.gatherWords("\\Beta.txt");
