@@ -27,24 +27,19 @@ namespace FiveWordsFiveLetters
         int[][] alphabetLists;
         List<KeyValuePair<int, int>> sortedAlphabet;
         int bit;
-        public void gatherWords(string filepath)
+        public void gatherWords(string filepath, int length)
         {
-            //List<string> readFile = new List<string>();
             string dir = Directory.GetCurrentDirectory();
             string dirFilePath = System.IO.Path.Combine(dir + filepath);
-            string[] readingFile = File.ReadAllLines(dirFilePath);
+            string[] readFile = File.ReadAllLines(dirFilePath);
 
-            for (int i = 0; i < readingFile.Count(); i++)
+            for (int i = 0; i < readFile.Count(); i++)
             {
-                if (CheckLength(readingFile[i]) && CheckDouble(readingFile[i])) 
+                if (CheckLength(readFile[i], length) && CheckDouble(readFile[i])) 
                 {
-                    FromString(readingFile[i]);
+                    FromString(readFile[i]);
                 }
             }
-
-            // & dem sammen vis den ikke giver 0 er bogstavet i ordet.
-            // Brug sortedAlphabet og bitlist til at match sammen.
-            // match dem i vores query for at undgå en for loop.
 
             sortedAlphabet = (
                 from entry in alphabetDictionary
@@ -60,20 +55,81 @@ namespace FiveWordsFiveLetters
                 bitList = bitList.Where(x => (x & sortedAlphabet[i].Key) == 0).ToList();
             }
             
-            WordsArray();
+            WordsArray(length);
         }
 
-        public int WordsArray()
+        public int WordsArray(int length)
         {
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            FiveWordsMatches(0,0, new List<int>());
+            if (length == 4)
+            {
+                FourWordsMatches(0, 0, new List<int>());
+            }
+
+            if (length == 5)
+            {
+                FiveWordsMatches(0,0, new List<int>());
+            }
+
+            if (length == 6)
+            {
+                SixWordsMatches(0, 0, new List<int>());
+            }
 
             Console.WriteLine("FiveWordsMatches: " + fiveMatches);
             stopwatch.Stop();
             Console.WriteLine($"Done in {stopwatch.ElapsedMilliseconds} ms");
             return fiveMatches;
+        }
+
+        private void FourWordsMatches(int usedBits, int pointer, List<int> matchedBits) 
+        {
+            if (sortedAlphabet is null) return;
+            if (matchedBits.Count() == 4)
+            {
+                Console.WriteLine("{0} {1} {2} {3}", dictionary[matchedBits[0]], dictionary[matchedBits[1]], dictionary[matchedBits[2]], dictionary[matchedBits[3]]);
+                fiveMatches++;
+                return;
+            }
+            for (int letter = pointer; letter <= alphabetLists.Count() - (26 - 2 - matchedBits.Count() * 6) && alphabetLists[letter] != null; letter++)
+            {
+                if ((sortedAlphabet[letter].Key & usedBits) != 0) continue;
+                foreach (int bit in alphabetLists[letter].Where(x => (x & usedBits) == 0))
+                {
+                    var fiveBitCollection = new List<int>(matchedBits);
+                    fiveBitCollection.Add(bit);
+                    FourWordsMatches(usedBits | bit, letter + 1, fiveBitCollection);
+                }
+            }
+
+            //for (int letter = pointer; letter <= alphabetLists.Count() - (26 - 2 - matchedBits.Count() * 6) && alphabetLists[letter] != null; letter++)
+            //{
+            //    if ((sortedAlphabet[letter].Key & usedBits) != 0) continue;
+            //    if (matchedBits.Count() == 0)
+            //    {
+            //        Parallel.ForEach(alphabetLists[letter].Where(x => (x & usedBits) == 0), bit =>
+            //        {
+            //            var fiveBitCollection = new List<int>(matchedBits);
+            //            fiveBitCollection.Add(bit);
+            //            FourWordsMatches(usedBits | bit, letter + 1, fiveBitCollection);
+            //        });
+
+            //    }
+            //    else
+            //    {
+            //        foreach (int bit in alphabetLists[letter].Where(x => (x & usedBits) == 0))
+            //        {
+            //            var fiveBitCollection = new List<int>(matchedBits);
+            //            fiveBitCollection.Add(bit);
+            //            FourWordsMatches(usedBits | bit, letter + 1, fiveBitCollection);
+            //        }
+            //    }
+
+
+            //}
+
         }
 
         private void FiveWordsMatches(int usedBits, int pointer, List<int> matchedBits)
@@ -85,22 +141,47 @@ namespace FiveWordsFiveLetters
                 fiveMatches++;
                 return;
             }
-            
-            for (int letter = pointer; letter <= alphabetLists.Count() - (26 - 1 - matchedBits.Count() * 5) && alphabetLists[letter] != null; letter++) 
+
+            //recursion with threading... Hopefully
+            for (int letter = pointer; letter <= alphabetLists.Count() - (26 - 1 - matchedBits.Count() * 5) && alphabetLists[letter] != null; letter++)
             {
                 if ((sortedAlphabet[letter].Key & usedBits) != 0) continue;
-                foreach (int bit in alphabetLists[letter].Where(x => (x & usedBits) == 0))
+                if (matchedBits.Count() == 0)
                 {
-                    var fiveBitCollection = new List<int>(matchedBits);
-                    fiveBitCollection.Add(bit);
-                    FiveWordsMatches(usedBits | bit, letter + 1, fiveBitCollection);
+                    Parallel.ForEach(alphabetLists[letter].Where(x => (x & usedBits) == 0), bit =>
+                    {
+                        var fiveBitCollection = new List<int>(matchedBits);
+                        fiveBitCollection.Add(bit);
+                        FiveWordsMatches(usedBits | bit, letter + 1, fiveBitCollection);
+                    });
+
+                }
+                else
+                {
+                    foreach (int bit in alphabetLists[letter].Where(x => (x & usedBits) == 0))
+                    {
+                        var fiveBitCollection = new List<int>(matchedBits);
+                        fiveBitCollection.Add(bit);
+                        FiveWordsMatches(usedBits | bit, letter + 1, fiveBitCollection);
+                    }
                 }
 
 
             }
+            
+            //Recursion without threading
+            //for (int letter = pointer; letter <= alphabetLists.Count() - (26 - 1 - matchedBits.Count() * 5) && alphabetLists[letter] != null; letter++) 
+            //{
+            //    if ((sortedAlphabet[letter].Key & usedBits) != 0) continue;
+            //    foreach (int bit in alphabetLists[letter].Where(x => (x & usedBits) == 0))
+            //    {
+            //        var fiveBitCollection = new List<int>(matchedBits);
+            //        fiveBitCollection.Add(bit);
+            //        FiveWordsMatches(usedBits | bit, letter + 1, fiveBitCollection);
+            //    }
+            //}
 
-
-
+            //This code can also work with for.loops, evident by the code below
             //Parallel.For(0, bitList.Count(), i =>
             //{
             //    Parallel.For(i + 1, bitList.Count(), k =>
@@ -123,6 +204,27 @@ namespace FiveWordsFiveLetters
             //    });
             //});
 
+        }
+
+        private void SixWordsMatches(int usedBits, int pointer, List<int> matchedBits)
+        {
+            if (sortedAlphabet is null) return;
+            if (matchedBits.Count() == 6)
+            {
+                Console.WriteLine("{0} {1} {2} {3} {4} {5}", dictionary[matchedBits[0]], dictionary[matchedBits[1]], dictionary[matchedBits[2]], dictionary[matchedBits[3]], dictionary[matchedBits[4]], dictionary[matchedBits[5]]);
+                fiveMatches++;
+                return;
+            }
+            for (int letter = pointer; letter <= alphabetLists.Count() - (26 - 2 - matchedBits.Count() * 4) && alphabetLists[letter] != null; letter++)
+            {
+                if ((sortedAlphabet[letter].Key & usedBits) != 0) continue;
+                foreach (int bit in alphabetLists[letter].Where(x => (x & usedBits) == 0))
+                {
+                    var fiveBitCollection = new List<int>(matchedBits);
+                    fiveBitCollection.Add(bit);
+                    SixWordsMatches(usedBits | bit, letter + 1, fiveBitCollection);
+                }
+            }
         }
 
         private void FromString(string word) 
@@ -159,20 +261,37 @@ namespace FiveWordsFiveLetters
 
         }
 
-        private bool CheckLength(string word)
+        private bool CheckLength(string word, int length)
         {
             int stringLength = word.Length;
             bool passed = true;
+            
+            if (length == 4)
+            {
+                if (stringLength != 4)
+                {
+                    passed = false;
+                }
+            }
 
-            if (stringLength != 5)
-                passed = false;
+            if (length == 5)
+            {
+                if (stringLength != 5)
+                    passed = false;
+            }
+
+            if (length == 6)
+            {
+                if (stringLength != 6)
+                    passed = false;
+            }
 
             return passed;
         }
 
         private bool CheckDouble(string word) 
         {
-            bool unMatched = true;
+            bool notDouble = true;
             int stringLength = word.Length;
             for (int q = 0; q < stringLength; q++)
             {
@@ -180,12 +299,12 @@ namespace FiveWordsFiveLetters
                 {
                     if (word[q] == word[w] && q != w)
                     {
-                        unMatched = false;
+                        notDouble = false;
                     }
 
                 }
             }
-            return unMatched;
+            return notDouble;
         }
     }
 }
