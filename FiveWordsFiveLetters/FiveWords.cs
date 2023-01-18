@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.ComponentModel;
 using System.Threading;
 using static System.Collections.Specialized.BitVector32;
+using System.Diagnostics.Metrics;
 
 namespace FiveWordsFiveLetters
 {
@@ -25,6 +26,7 @@ namespace FiveWordsFiveLetters
         int value = 1;
         int[][] alphabetLists;
         List<KeyValuePair<int, int>> sortedAlphabet;
+        int bit;
         public void gatherWords(string filepath)
         {
             //List<string> readFile = new List<string>();
@@ -83,80 +85,44 @@ namespace FiveWordsFiveLetters
                 fiveMatches++;
                 return;
             }
-
-            for (int letter = pointer; letter <= alphabetLists.Count() - (26 - 1 - matchedBits.Count() * 5) && alphabetLists != null; letter++)
+            
+            for (int letter = pointer; letter <= alphabetLists.Count() - (26 - 1 - matchedBits.Count() * 5) && alphabetLists[letter] != null; letter++) 
             {
                 if ((sortedAlphabet[letter].Key & usedBits) != 0) continue;
                 foreach (int bit in alphabetLists[letter].Where(x => (x & usedBits) == 0))
                 {
-                    var fiveBitCollection = new List<int>();
+                    var fiveBitCollection = new List<int>(matchedBits);
                     fiveBitCollection.Add(bit);
                     FiveWordsMatches(usedBits | bit, letter + 1, fiveBitCollection);
                 }
 
-                
 
             }
-            //int pairs;
-            //foreach (var item in alphabetLists)
+
+
+
+            //Parallel.For(0, bitList.Count(), i =>
             //{
-
-            //    if (pairs == 5)
+            //    Parallel.For(i + 1, bitList.Count(), k =>
             //    {
-            //        Console.WriteLine($"Word1: {dictionary[bitList[i]]}, Word2: {dictionary[bitList[k]]} Word3: {dictionary[bitList[c]]}, Word4: {dictionary[bitList[b]]}, Word5: {dictionary[bitList[d]]}");
-            //        fiveMatches++;
-            //    }
-            //}
-            //Threading();
-
-
-
-            //for (int i = 0; i < 1; i++) //bokstav 0-1
-            //{
-            //    for (int j = 0; j < alphabetLists[i].Length; j++) //liste 0-1
-            //    {
-            //        //alphabetLists[i][j]
-            //        //next not used alpha
-            //        for (int k = i; k < sortedAlphabet.Count(); k++) //bokstav
+            //        if ((bitList[i] & bitList[k]) != 0) return;
+            //        for (int c = k + 1; c < bitList.Count(); c++)
             //        {
-            //            if ((alphabetLists[i][j] & sortedAlphabet[k].Key) == 0)
+            //            if (((bitList[i] | bitList[k]) & bitList[c]) != 0) continue;
+            //            for (int b = c + 1; b < bitList.Count(); b++)
             //            {
-            //                //list
-            //                for (int l = 0; l < alphabetLists[l].Length; l++) //liste 0-1
+            //                if (((bitList[i] | bitList[k] | bitList[c]) & bitList[b]) != 0) continue;
+            //                for (int d = b + 1; d < bitList.Count(); d++)
             //                {
-            //                    //alphabetLists[k][l]
-            //                    if ((alphabetLists[k][l] & sortedAlphabet[l].Key) == 0)
-            //                    {
-
-            //                    }
+            //                    if (((bitList[i] | bitList[k] | bitList[c] | bitList[b]) & bitList[d]) != 0) continue;
+            //                    Console.WriteLine($"Word1: {dictionary[bitList[i]]}, Word2: {dictionary[bitList[k]]} Word3: {dictionary[bitList[c]]}, Word4: {dictionary[bitList[b]]}, Word5: {dictionary[bitList[d]]}");
+            //                    fiveMatches++;
             //                }
             //            }
             //        }
-            //    }
-            //}
+            //    });
+            //});
 
-                //Parallel.For(0, bitList.Count(), i =>
-                //{
-                //    Parallel.For(i + 1, bitList.Count(), k =>
-                //    {
-                //        if ((bitList[i] & bitList[k]) != 0) return;
-                //        for (int c = k + 1; c < bitList.Count(); c++)
-                //        {
-                //            if (((bitList[i] | bitList[k]) & bitList[c]) != 0) continue;
-                //            for (int b = c + 1; b < bitList.Count(); b++)
-                //            {
-                //                if (((bitList[i] | bitList[k] | bitList[c]) & bitList[b]) != 0) continue;
-                //                for (int d = b + 1; d < bitList.Count(); d++)
-                //                {
-                //                    if (((bitList[i] | bitList[k] | bitList[c] | bitList[b]) & bitList[d]) != 0) continue;
-                //                    Console.WriteLine($"Word1: {dictionary[bitList[i]]}, Word2: {dictionary[bitList[k]]} Word3: {dictionary[bitList[c]]}, Word4: {dictionary[bitList[b]]}, Word5: {dictionary[bitList[d]]}");
-                //                    fiveMatches++;
-                //                }
-                //            }
-                //        }
-                //    });
-                //});
-            
         }
 
         private void FromString(string word) 
