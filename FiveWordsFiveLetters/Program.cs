@@ -1,2 +1,5 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+﻿using FiveWordsFiveLetters;
+
+Console.WriteLine("FiveWordsFiveLetters");
+var fiveWords = new FiveWords();
+fiveWords.gatherWords("\\Alpha.txt", 4);
